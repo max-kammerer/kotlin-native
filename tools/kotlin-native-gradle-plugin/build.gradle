@@ -51,6 +51,7 @@ dependencies {
     compile project(':shared')
     compile project(':tools:helpers')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     compile gradleApi()
 }
 

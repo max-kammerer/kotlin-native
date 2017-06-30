@@ -127,6 +127,9 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Input var enableAssertions   = false
         internal set
 
+    @Input var multiPlatform = false
+        internal set
+
     @Optional @Input var languageVersion : String? = null
         internal set
     @Optional @Input var apiVersion      : String? = null
@@ -156,6 +159,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimization)
         addKey("-ea", enableAssertions)
+        addKey("-Xmulti-platform", multiPlatform)
 
         (if (inputFiles.isEmpty()) {
             project.fileTree("${project.projectDir.canonicalPath}/src/main/kotlin")
