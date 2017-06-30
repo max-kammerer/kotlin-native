@@ -58,7 +58,7 @@ open class KonanCompileTask: KonanTargetableTask() {
 
     internal val _inputFiles = mutableSetOf<FileCollection>()
     val inputFiles: Collection<FileCollection>
-        @InputFiles get() = _inputFiles.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
+        @InputFiles get() = listOf(project.konanDefaultSrcFiles) + _inputFiles
 
     @InputFiles val libraries       = mutableSetOf<FileCollection>()
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
@@ -90,6 +90,9 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Input var noDefaultLibs      = false
         internal set
     @Console var measureTime      = false
+        internal set
+
+    @Input var multiPlatform = false
         internal set
 
     @Optional @Input var languageVersion : String? = null
@@ -126,6 +129,7 @@ open class KonanCompileTask: KonanTargetableTask() {
         addKey("-ea", enableAssertions)
         addKey("-nodefaultlibs", noDefaultLibs)
         addKey("--time", measureTime)
+        addKey("-Xmulti-platform", multiPlatform)
 
         addAll(extraOpts)
 
