@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.replace
 
-internal val CallableDescriptor.isSuspend: Boolean
+val CallableDescriptor.isSuspend: Boolean
     get() = this is FunctionDescriptor && isSuspend
 
 /**
  * @return naturally-ordered list of all parameters available inside the function body.
  */
-internal val CallableDescriptor.allParameters: List<ParameterDescriptor>
+val CallableDescriptor.allParameters: List<ParameterDescriptor>
     get() = if (this is ConstructorDescriptor) {
         listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
     } else {
@@ -42,7 +42,7 @@ internal val CallableDescriptor.allParameters: List<ParameterDescriptor>
 /**
  * @return naturally-ordered list of the parameters that can have values specified at call site.
  */
-internal val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
+val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
     get() {
         val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
 

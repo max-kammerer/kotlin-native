@@ -49,7 +49,7 @@ fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
     return strWriter.toString()
 }
 
-internal fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): DeclarationDescriptor? {
+fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): DeclarationDescriptor? {
     // We need to copy descriptors for vtable building, thus take only functions and properties.
     return when (this) {
         is CallableMemberDescriptor ->

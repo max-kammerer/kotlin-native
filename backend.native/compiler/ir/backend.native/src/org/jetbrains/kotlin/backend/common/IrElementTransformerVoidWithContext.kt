@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.descriptors.*
 
-internal class ScopeWithIr(val scope: Scope, val irElement: IrElement)
+class ScopeWithIr(val scope: Scope, val irElement: IrElement)
 
-abstract internal class IrElementTransformerVoidWithContext : IrElementTransformerVoid() {
+abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
