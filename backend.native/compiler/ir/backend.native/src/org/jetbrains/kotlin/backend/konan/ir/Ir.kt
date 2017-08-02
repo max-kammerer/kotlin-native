@@ -21,9 +21,12 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
 
 // This is what Context collects about IR.
@@ -65,4 +68,50 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
 
     val scheduleImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.scheduleImplFunction)
+
+    val areEqualByValue = context.getInternalFunctions("areEqualByValue").map {
+        symbolTable.referenceSimpleFunction(it)
+    }
+
+    override val areEqual = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
+
+    override val ThrowNullPointerException = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("ThrowNullPointerException").single())
+
+    override val ThrowNoWhenBranchMatchedException = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single())
+
+    override val ThrowTypeCastException = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("ThrowTypeCastException").single())
+
+    override val ThrowUninitializedPropertyAccessException = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
+    )
+
+    override val stringBuilder = symbolTable.referenceClass(
+            builtInsPackage("kotlin", "text").getContributedClassifier(
+                    Name.identifier("StringBuilder"), NoLookupLocation.FROM_BACKEND
+            ) as ClassDescriptor
+    )
+
+    val checkProgressionStep = context.getInternalFunctions("checkProgressionStep")
+            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
+            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
+
+    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
+    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
+
+    override val valuesForEnum = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("valuesForEnum").single())
+
+    override val valueOfForEnum = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("valueOfForEnum").single())
+
+    override val getContinuation = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("getContinuation").single())
+
+    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
+    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
+
 }
