@@ -52,6 +52,10 @@ open class KonanCompileTask: KonanTargetableTask, SourceTask() {
     val isCrossCompile: Boolean
         @Internal get() = (targetManager.target != TargetManager.host)
 
+    init {
+        source("src/main/kotlin")
+    }
+
     internal fun init(artifactName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.artifactName = artifactName
@@ -75,10 +79,6 @@ open class KonanCompileTask: KonanTargetableTask, SourceTask() {
         @OutputFile get() = project.file(artifactPath)
 
     // Other compilation parameters -------------------------------------------
-
-    internal val _inputFiles = mutableSetOf<FileCollection>()
-    val inputFiles: Collection<FileCollection>
-        @InputFiles get() = listOf(project.konanDefaultSrcFiles) + _inputFiles
 
     @InputFiles val libraries       = mutableSetOf<FileCollection>()
     @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
@@ -153,7 +153,7 @@ open class KonanCompileTask: KonanTargetableTask, SourceTask() {
 
         addAll(extraOpts)
 
-        inputFiles.flatMap { it.files }.filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
+        getSource().filter { it.name.endsWith(".kt") }.mapTo(this) { it.canonicalPath }
     }
 
     @TaskAction
@@ -212,13 +212,13 @@ open class KonanCompileConfig(
     // DSL. Input/output files
 
     fun inputDir(dir: Any) = with(compilationTask) {
-        _inputFiles.add(project.fileTree(dir))
+        source.add(project.fileTree(dir))
     }
     fun inputFiles(vararg files: Any) = with(compilationTask) {
-        _inputFiles.add(project.files(files))
+        source.add(project.files(files))
     }
-    fun inputFiles(files: FileCollection) = compilationTask._inputFiles.add(files)
-    fun inputFiles(files: Collection<FileCollection>) = compilationTask._inputFiles.addAll(files)
+    fun inputFiles(files: FileCollection) = compilationTask.source.add(files)
+    fun inputFiles(files: Collection<FileCollection>) = files.forEach { compilationTask.source.add(it) }
 
 
     fun outputDir(dir: Any) = with(compilationTask) {

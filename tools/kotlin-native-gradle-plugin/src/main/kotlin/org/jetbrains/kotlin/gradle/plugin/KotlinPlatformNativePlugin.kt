@@ -60,7 +60,7 @@ open class NativePlatformImplementationPluginBase(platformName: String) : Kotlin
                     sourceDirectorySet: SourceDirectorySet ->
                     println("add commonSourceSet $sourceDirectorySet")
                     platformProject.tasks.withType(KonanCompileTask::class.java).all {
-                        it._inputFiles.add(sourceDirectorySet)
+                        it.source(sourceDirectorySet)
                     }
                 }
             }

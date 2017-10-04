@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.*
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -54,7 +55,6 @@ internal val Project.konanBuildRoot               get() = "${buildDir.canonicalP
 internal val Project.konanCompilerOutputDir       get() = "${konanBuildRoot}/bin"
 internal val Project.konanInteropOutputDir        get() = "${konanBuildRoot}/c_interop"
 
-internal val Project.konanDefaultSrcFiles         get() = fileTree("${projectDir.canonicalPath}/src/main/kotlin")
 internal fun Project.konanDefaultDefFile(libName: String)
         = file("${projectDir.canonicalPath}/src/main/c_interop/$libName.def")
 
@@ -142,6 +142,9 @@ internal fun dumpProperties(task: Task) {
     fun Collection<FileCollection>.dump() = flatMap { it.files }.joinToString(prefix = "[",
             separator = ",\n${" ".repeat(22)}", postfix = "]")
 
+    fun FileTree.dump() = joinToString(prefix = "[",
+            separator = ",\n${" ".repeat(22)}", postfix = "]")
+
     when (task) {
         is KonanCompileTask -> {
             println()
@@ -149,7 +152,7 @@ internal fun dumpProperties(task: Task) {
             println("outputDir          : ${task.outputDir}")
             println("artifact           : ${task.artifact}")
             println("artifactPath       : ${task.artifactPath}")
-            println("inputFiles         : ${task.inputFiles.dump()}")
+            println("inputFiles         : ${task.source.dump()}")
             println("produce            : ${task.produce}")
             println("libraries          : ${task.libraries.dump()}")
             println("nativeLibraries    : ${task.nativeLibraries.dump()}")
