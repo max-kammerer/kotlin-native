@@ -16,31 +16,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.TargetManager
 
-abstract class KonanTargetableTask: DefaultTask() {
+interface KonanTargetableTask {
 
-    @Optional @Input var target          : String? = null
-        internal set
-
-    internal val targetManager: TargetManager by lazy {
-        TargetManager(target ?: "host")
-    } @Internal get
-
-
-    val targetIsSupported: Boolean
-        @Internal get() = targetManager.target.enabled
-
-    val isCrossCompile: Boolean
-        @Internal get() = (targetManager.target != TargetManager.host)
-
-    @Internal fun produceSuffix(produce: String): String
-        = CompilerOutputKind.valueOf(produce.toUpperCase())
-            .suffix(targetManager.target)
+    val target: String?
 }
 
 internal val Project.host

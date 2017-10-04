@@ -21,12 +21,14 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.TargetManager
 import java.io.File
 
 /**
  * A task compiling the target executable/library using Kotlin/Native compiler
  */
-open class KonanCompileTask: KonanTargetableTask() {
+open class KonanCompileTask: KonanTargetableTask, SourceTask() {
 
     // Output artifact --------------------------------------------------------
 
@@ -36,11 +38,29 @@ open class KonanCompileTask: KonanTargetableTask() {
     @Internal lateinit var outputDir: File
         internal set
 
+    @Optional @Input
+    override var target: String? = null
+        internal set
+
+    internal val targetManager: TargetManager by lazy {
+        TargetManager(target ?: "host")
+    } @Internal get
+
+    val targetIsSupported: Boolean
+        @Internal get() = targetManager.target.enabled
+
+    val isCrossCompile: Boolean
+        @Internal get() = (targetManager.target != TargetManager.host)
+
     internal fun init(artifactName: String) {
         dependsOn(project.konanCompilerDownloadTask)
         this.artifactName = artifactName
         outputDir = project.file(project.konanCompilerOutputDir)
     }
+
+    @Internal fun produceSuffix(produce: String): String
+            = CompilerOutputKind.valueOf(produce.toUpperCase())
+            .suffix(targetManager.target)
 
     val artifactNamePath: String
         @Internal get() = "${outputDir.absolutePath}/$artifactName"

@@ -27,7 +27,11 @@ import java.io.File
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
-open class KonanInteropTask: KonanTargetableTask() {
+open class KonanInteropTask: KonanTargetableTask, DefaultTask() {
+
+    @Optional @Input
+    override var target: String? = null
+        internal set
 
     internal fun init(libName: String) {
         dependsOn(project.konanCompilerDownloadTask)

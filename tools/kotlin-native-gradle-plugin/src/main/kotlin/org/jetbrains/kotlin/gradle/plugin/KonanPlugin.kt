@@ -79,16 +79,11 @@ internal fun Project.targetIsRequested(target: String?): Boolean {
             target == null)
 }
 
-internal fun Project.targetIsSupportedAndRequested(task: KonanTargetableTask) 
+internal fun Project.targetIsSupportedAndRequested(task: KonanCompileTask)
     = task.targetIsSupported && this.targetIsRequested(task.target)
 
 internal val Project.supportedCompileTasks: TaskCollection<KonanCompileTask>
     get() = project.tasks.withType(KonanCompileTask::class.java).matching { 
-        targetIsSupportedAndRequested(it)
-    }
-
-internal val Project.supportedInteropTasks: TaskCollection<KonanInteropTask>
-    get() = project.tasks.withType(KonanInteropTask::class.java).matching { 
         targetIsSupportedAndRequested(it)
     }
 
