@@ -34,7 +34,8 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             "-ea",
             "-Xmx3G",
             "-Dkonan.home=${project.konanHome}",
-            "-Djava.library.path=${project.konanHome}/konan/nativelib")
+            "-Djava.library.path=${project.konanHome}/konan/nativelib"/*,
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5016"*/)
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
